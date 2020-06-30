@@ -62,9 +62,8 @@ class CircleOfFifthState extends State<CircleOfFifths> with TickerProviderStateM
   var _animationMap = HashMap<Selection, AnimationController>();
 
   void _beginTracking(Size size, Offset position) => setState(() {
-    _position = position;
     _circle = CircleParams(size);
-    _updateSelection();
+    _updateTracking(size, position);
   });
 
   void _updateTracking(Size size, Offset position) => setState(() {
@@ -84,6 +83,7 @@ class CircleOfFifthState extends State<CircleOfFifths> with TickerProviderStateM
     return MouseRegion(
       onEnter: (pointer) => _beginTracking(context.size, _transform(context, pointer.position)),
       onHover: (pointer) => _updateTracking(context.size, _transform(context, pointer.position)),
+      onExit: (pointer) => _updateTracking(context.size, _transform(context, pointer.position)),
       child: CustomPaint(
         painter: CircleOfFifthsPainter(),
         child: Stack(
@@ -125,31 +125,30 @@ class CircleOfFifthState extends State<CircleOfFifths> with TickerProviderStateM
       currentSelection = Selection(circleIndex: 1, segment: segmentIndex);
     }
 
-    if (currentSelection != Selection.none) {
-      if (currentSelection == _currentHover) {
-        return;
-      }
+    if (currentSelection == _currentHover) {
+      return;
+    }
 
-      var currentHover = _currentHover;
-      var previousHoverController = _animationMap[currentHover];
-      previousHoverController?.reverse()?.then<void>((_) {
-        _animationMap.remove(currentHover).dispose();
-        setState(() { });
-      });
+    var currentHover = _currentHover;
+    var previousHoverController = _animationMap[currentHover];
+    previousHoverController?.reverse()?.then<void>((_) {
+      _animationMap.remove(currentHover).dispose();
+      setState(() { });
+    });
 
-      _currentHover = currentSelection;
+    _currentHover = currentSelection;
 
-      if (_animationMap[currentSelection] == null) {
-        var controller = AnimationController(
-            vsync: this,
-            duration: Duration(milliseconds: 100),
-            lowerBound: 1.0,
-            upperBound: 1.1,
-        );
-        _animationMap[currentSelection] = controller;
+    // Create a hover animation for the current selection if it doesn't exist yet
+    if (currentSelection != Selection.none && _animationMap[currentSelection] == null) {
+      var controller = AnimationController(
+          vsync: this,
+          duration: Duration(milliseconds: 100),
+          lowerBound: 1.0,
+          upperBound: 1.1,
+      );
+      _animationMap[currentSelection] = controller;
 
-        controller.forward();
-      }
+      controller.forward();
     }
   }
 }
