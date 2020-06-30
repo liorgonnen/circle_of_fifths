@@ -12,7 +12,7 @@ const _sliceAngle = 2 * pi / 12;
 const _outerFontSizeScale = 0.8;
 const _innerFontSizeScale = 0.5;
 const _majorKeys = ["C", "G", "D", "A", "E", "B", "F♯\nG♭", "D♭", "A♭", "A♭", "E♭", "B♭", "F"];
-const _relativeMinors = ["Am", "Em", "Bm", "F♯m", "C♯m", "G♯m", "D♯m\nE♭m", "Bbm", "Fm", "Cm", "Gm", "Dm"];
+const _relativeMinors = ["Am", "Em", "Bm", "F♯m", "C♯m", "G♯m", "D♯m\nE♭m", "B♭m", "Fm", "Cm", "Gm", "Dm"];
 final _colors = [0x29617C, 0x289FAF, 0xD8DBB9, 0xEAB069, 0xF2594C].map((hex) => Color(0xff000000 | hex)).toList();
 
 class Selection implements Comparable<Selection> {
